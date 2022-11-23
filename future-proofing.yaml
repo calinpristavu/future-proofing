@@ -23,31 +23,51 @@ future-proofing:
         - composer require rector/rector --dev
         - vendor/bin/rector init
 
-        # section that registers the rectors
-        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
-#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
-#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
-#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
-#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
-#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
-#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
-#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
-#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
-#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
-#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
-#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
-#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
-#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
-#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
-#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
-#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
-#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
-#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
-#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
-#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
-#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
-#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
-        # /section that registers the rectors
+        # section that registers rector sets
+        - bin/future add-set \Rector\Set\ValueObject\SetList::CODE_QUALITY
+        - bin/future add-set \Rector\Set\ValueObject\SetList::CODING_STYLE
+        - bin/future add-set \Rector\Set\ValueObject\SetList::DEAD_CODE
+        - bin/future add-set \Rector\Set\ValueObject\SetList::EARLY_RETURN
+        - bin/future add-set \Rector\Set\ValueObject\SetList::PSR_4
+        - bin/future add-set \Rector\Set\ValueObject\SetList::PRIVATIZATION
+        - bin/future add-set \Rector\Set\ValueObject\SetList::TYPE_DECLARATION
+        - bin/future add-set \Rector\Set\ValueObject\SetList::TYPE_DECLARATION_STRICT
+        - bin/future add-set \Rector\Set\ValueObject\LevelSetList::UP_TO_PHP_82
+
+        # section that registers rector rules
+        - bin/future add-ruleset \Rector\DependencyInjection\Rector\Class_\ActionInjectionToConstructorInjectionRector
+        - bin/future add-ruleset \Rector\RemovingStatic\Rector\ClassMethod\LocallyCalledStaticMethodToNonStaticRector
+        - bin/future add-ruleset \Rector\Restoration\Rector\Property\MakeTypedPropertyNullableIfCheckedRector
+        - bin/future add-ruleset \Rector\Restoration\Rector\Class_\RemoveFinalFromEntityRector
+        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\ArrowFunction\AddArrowFunctionReturnTypeRector
+        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\Closure\AddClosureReturnTypeRector
+        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\AddMethodCallBasedStrictParamTypeRector
+        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\AddReturnTypeDeclarationBasedOnParentClassMethodRector
+        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\AddVoidReturnTypeWhereNoReturnRector
+        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\ParamTypeByMethodCallTypeRector
+        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\ParamTypeByParentCallTypeRector
+        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\Param\ParamTypeFromStrictTypedPropertyRector
+        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromReturnNewRector
+        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictBoolReturnExprRector
+        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictNativeCallRector
+        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictNewArrayRector
+        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictTypedPropertyRector
+        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\Property\TypedPropertyFromAssignsRector
+        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\Property\TypedPropertyFromStrictConstructorRector
+        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\Property\TypedPropertyFromStrictGetterMethodReturnTypeRector
+        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\Property\TypedPropertyFromStrictSetUpRector
+        - bin/future add-ruleset \Rector\Visibility\Rector\ClassMethod\ExplicitPublicClassMethodRector
+
+        #section that excludes rector rules
+        - bin/future skip \Rector\Php80\Rector\Class_\ClassPropertyAssignToConstructorPromotionRector
+        - bin/future skip \Rector\Privatization\Rector\Class_\FinalizeClassesWithoutChildrenRector
+        - bin/future skip \Rector\CodingStyle\Rector\ClassConst\VarConstantCommentRector
+        - bin/future skip \Rector\DeadCode\Rector\ClassMethod\RemoveUnusedPrivateMethodRector
+        - bin/future skip \Rector\TypeDeclaration\Rector\ClassMethod\AddArrayParamDocTypeRector
+        - bin/future skip \Rector\TypeDeclaration\Rector\ClassMethod\AddArrayReturnDocTypeRector
+        - bin/future skip \Rector\DeadCode\Rector\MethodCall\RemoveEmptyMethodCallRector
+        - bin/future skip \Rector\CodingStyle\Rector\String_\SymplifyQuoteEscapeRector
+        - bin/future skip \Rector\CodingStyle\Rector\Catch_\CatchExceptionNameMatchingTypeRector
 
         - vendor/bin/rector process src
 
