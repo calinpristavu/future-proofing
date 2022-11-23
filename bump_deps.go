@@ -17,6 +17,7 @@ var bumpDeps = &cobra.Command{
 		if err != nil {
 			log.Fatalf("could not read composer.json: %v\n", err)
 		}
+		defer file.Close()
 
 		deps, err := getDepUpgrades()
 

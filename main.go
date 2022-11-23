@@ -10,7 +10,8 @@ import (
 func main() {
 	rootCmd.AddCommand(bumpPhp)
 	rootCmd.AddCommand(bumpDeps)
-	//rootCmd.AddCommand(addRule)
+	rootCmd.AddCommand(addRule)
+	rootCmd.AddCommand(addRuleset)
 
 	Execute()
 }
