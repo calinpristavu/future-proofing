@@ -1,0 +1,60 @@
+future-setup:
+    # This is just an example.
+    # If your project has a Dockerfile. Use that one and change the "FROM " section to a latest PHP base image.
+    image: php:latest-fpm-alpine
+    stage: future
+    script:
+        - apk add --no-cache curl openldap-dev
+        - docker-php-ext-install ldap pdo_mysql
+        - curl --silent --show-error "https://getcomposer.org/installer" | php -- --install-dir=/usr/local/bin --filename=composer
+        - composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+    artifacts:
+        paths:
+            - vendor/
+
+future-proofing:
+    stage: future
+    script:
+        - echo fetch_future_binary_into_bin_dir # @see https://cobra.dev/
+        - bin/future bump-php latest
+        - bin/future bump-deps
+        - composer update -W
+
+        - composer require rector/rector --dev
+        - vendor/bin/rector init
+
+        # section that registers the rectors
+        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
+#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
+#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
+#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
+#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
+#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
+#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
+#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
+#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
+#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
+#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
+#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
+#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
+#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
+#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
+#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
+#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
+#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
+#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
+#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
+#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
+#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
+#        - bin/future add-rule InlineConstructorDefaultToPropertyRector # just an example
+        # /section that registers the rectors
+
+        - vendor/bin/rector process src
+
+        # test running section
+        - vendor/bin/phpunit
+#        - vendor/bin/codeception
+#        - vendor/bin/behat
+        # /test running section
+    dependencies:
+        - future-composer
