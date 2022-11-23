@@ -54,7 +54,7 @@ type schema struct {
 }
 
 func (s *schema) setPhpVersion(version string) {
-	s.Require["php"] = ">=" + version
+	s.Require["php"] = version
 	if s.Config != nil {
 		platform, isMap := s.Config["platform"].(map[string]interface{})
 		if isMap {
