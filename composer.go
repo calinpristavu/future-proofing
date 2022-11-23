@@ -1,7 +1,10 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"log"
+	"os"
 )
 
 type schema struct {
@@ -64,22 +67,55 @@ func (s *schema) setPhpVersion(version string) {
 	}
 }
 
-func (s *schema) setRequireDepVersion(dep, version string) {
+func (s *schema) setRequireDepVersion(dep, version string) error {
 	_, ok := s.Require[dep]
 	if !ok {
-		log.Printf("Dependency %s not found in require\n", dep)
-		return
+		return fmt.Errorf("dependency %s not found in require", dep)
 	}
 
 	s.Require[dep] = version
+
+	return nil
 }
 
-func (s *schema) setRequireDevDepVersion(dep, version string) {
+func (s *schema) setRequireDevDepVersion(dep, version string) error {
 	_, ok := s.RequireDev[dep]
 	if !ok {
-		log.Printf("Dependency %s not found in require-dev\n", dep)
-		return
+		return fmt.Errorf("dependency %s not found in require-dev", dep)
 	}
 
 	s.RequireDev[dep] = version
+
+	return nil
+}
+
+func writeComposerJson(file *os.File, s schema) error {
+	if err := file.Truncate(0); err != nil {
+		log.Fatalf("failed truncating composer.json: %v\n", err)
+	}
+
+	if _, err := file.Seek(0, 0); err != nil {
+		return err
+	}
+	if err := json.NewEncoder(file).Encode(s); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func readComposerJson() (schema, *os.File, error) {
+	var s schema
+
+	const pathToComposerJson = "./composer.json"
+	file, err := os.OpenFile(pathToComposerJson, os.O_RDWR, 0644)
+	if err != nil {
+		return s, file, err
+	}
+
+	if err := json.NewDecoder(file).Decode(&s); err != nil {
+		return s, file, err
+	}
+
+	return s, file, nil
 }
