@@ -1,4 +1,5 @@
 bin/
 !bin/.gitkeep
 
+composer.json
 
