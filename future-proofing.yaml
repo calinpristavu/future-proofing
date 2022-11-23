@@ -35,28 +35,28 @@ future-proofing:
         - bin/future add-set \Rector\Set\ValueObject\LevelSetList::UP_TO_PHP_82
 
         # section that registers rector rules
-        - bin/future add-rule \Rector\DependencyInjection\Rector\Class_\ActionInjectionToConstructorInjectionRector
-        - bin/future add-rule \Rector\RemovingStatic\Rector\ClassMethod\LocallyCalledStaticMethodToNonStaticRector
-        - bin/future add-rule \Rector\Restoration\Rector\Property\MakeTypedPropertyNullableIfCheckedRector
-        - bin/future add-rule \Rector\Restoration\Rector\Class_\RemoveFinalFromEntityRector
-        - bin/future add-rule \Rector\TypeDeclaration\Rector\ArrowFunction\AddArrowFunctionReturnTypeRector
-        - bin/future add-rule \Rector\TypeDeclaration\Rector\Closure\AddClosureReturnTypeRector
-        - bin/future add-rule \Rector\TypeDeclaration\Rector\ClassMethod\AddMethodCallBasedStrictParamTypeRector
-        - bin/future add-rule \Rector\TypeDeclaration\Rector\ClassMethod\AddReturnTypeDeclarationBasedOnParentClassMethodRector
-        - bin/future add-rule \Rector\TypeDeclaration\Rector\ClassMethod\AddVoidReturnTypeWhereNoReturnRector
-        - bin/future add-rule \Rector\TypeDeclaration\Rector\ClassMethod\ParamTypeByMethodCallTypeRector
-        - bin/future add-rule \Rector\TypeDeclaration\Rector\ClassMethod\ParamTypeByParentCallTypeRector
-        - bin/future add-rule \Rector\TypeDeclaration\Rector\Param\ParamTypeFromStrictTypedPropertyRector
-        - bin/future add-rule \Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromReturnNewRector
-        - bin/future add-rule \Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictBoolReturnExprRector
-        - bin/future add-rule \Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictNativeCallRector
-        - bin/future add-rule \Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictNewArrayRector
-        - bin/future add-rule \Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictTypedPropertyRector
-        - bin/future add-rule \Rector\TypeDeclaration\Rector\Property\TypedPropertyFromAssignsRector
-        - bin/future add-rule \Rector\TypeDeclaration\Rector\Property\TypedPropertyFromStrictConstructorRector
-        - bin/future add-rule \Rector\TypeDeclaration\Rector\Property\TypedPropertyFromStrictGetterMethodReturnTypeRector
-        - bin/future add-rule \Rector\TypeDeclaration\Rector\Property\TypedPropertyFromStrictSetUpRector
-        - bin/future add-rule \Rector\Visibility\Rector\ClassMethod\ExplicitPublicClassMethodRector
+        - bin/future add-ruleset \Rector\DependencyInjection\Rector\Class_\ActionInjectionToConstructorInjectionRector
+        - bin/future add-ruleset \Rector\RemovingStatic\Rector\ClassMethod\LocallyCalledStaticMethodToNonStaticRector
+        - bin/future add-ruleset \Rector\Restoration\Rector\Property\MakeTypedPropertyNullableIfCheckedRector
+        - bin/future add-ruleset \Rector\Restoration\Rector\Class_\RemoveFinalFromEntityRector
+        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\ArrowFunction\AddArrowFunctionReturnTypeRector
+        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\Closure\AddClosureReturnTypeRector
+        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\AddMethodCallBasedStrictParamTypeRector
+        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\AddReturnTypeDeclarationBasedOnParentClassMethodRector
+        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\AddVoidReturnTypeWhereNoReturnRector
+        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\ParamTypeByMethodCallTypeRector
+        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\ParamTypeByParentCallTypeRector
+        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\Param\ParamTypeFromStrictTypedPropertyRector
+        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromReturnNewRector
+        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictBoolReturnExprRector
+        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictNativeCallRector
+        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictNewArrayRector
+        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictTypedPropertyRector
+        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\Property\TypedPropertyFromAssignsRector
+        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\Property\TypedPropertyFromStrictConstructorRector
+        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\Property\TypedPropertyFromStrictGetterMethodReturnTypeRector
+        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\Property\TypedPropertyFromStrictSetUpRector
+        - bin/future add-ruleset \Rector\Visibility\Rector\ClassMethod\ExplicitPublicClassMethodRector
 
         #section that excludes rector rules
         - bin/future skip \Rector\Php80\Rector\Class_\ClassPropertyAssignToConstructorPromotionRector
@@ -67,6 +67,7 @@ future-proofing:
         - bin/future skip \Rector\TypeDeclaration\Rector\ClassMethod\AddArrayReturnDocTypeRector
         - bin/future skip \Rector\DeadCode\Rector\MethodCall\RemoveEmptyMethodCallRector
         - bin/future skip \Rector\CodingStyle\Rector\String_\SymplifyQuoteEscapeRector
+        - bin/future skip \Rector\CodingStyle\Rector\Catch_\CatchExceptionNameMatchingTypeRector
 
         - vendor/bin/rector process src
 
