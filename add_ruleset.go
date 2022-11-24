@@ -17,10 +17,9 @@ var addRuleset = &cobra.Command{
 	Short: "Adds a rector ruleset",
 	Long:  `Edits the rector.php file to add a new ruleset`,
 	Run: func(cmd *cobra.Command, args []string) {
-		// TODO: implement this validation:
-		//if !isRulesetArgumentValid(args) {
-		//	log.Fatalf("invalid ruleset argument: %s. Example: \\Rector\\Set\\ValueObject\\LevelSetList::UP_TO_PHP_81\n", args[0])
-		//}
+		if !isRulesetArgumentValid(args) {
+			log.Fatalf("invalid ruleset argument: %s. Example: \\Rector\\Set\\ValueObject\\LevelSetList::UP_TO_PHP_81\n", args[0])
+		}
 		const rectorFile = "rector.php"
 		file, err := os.OpenFile(rectorFile, os.O_RDWR, 0644)
 		if err != nil {
@@ -46,6 +45,25 @@ var addRuleset = &cobra.Command{
 			log.Println(line)
 		}
 	},
+}
+
+func isRulesetArgumentValid(args []string) bool {
+	// there should be an argument
+	if len(args) == 0 {
+		return false
+	}
+
+	// argument must be a call to a constant
+	if !strings.Contains(args[0], "::") {
+		return false
+	}
+
+	// argument must have a namespace
+	if !strings.Contains(args[0], "\\") {
+		return false
+	}
+
+	return true
 }
 
 func rulesetInjectedSuccessfully(line string, index int, lines []string, args []string) bool {
