@@ -12,6 +12,7 @@ func main() {
 	rootCmd.AddCommand(bumpDeps)
 	rootCmd.AddCommand(addRule)
 	rootCmd.AddCommand(addRuleset)
+	rootCmd.AddCommand(skip)
 
 	Execute()
 }
