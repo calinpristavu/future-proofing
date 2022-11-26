@@ -14,7 +14,7 @@ var addRule = &cobra.Command{
 	Long:  `Edits the rector.php file to add a new rule`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if !isRuleArgumentValid(args) {
-			log.Fatalf("invalid ruleset argument: %s. Example: \\Rector\\Set\\ValueObject\\LevelSetList::UP_TO_PHP_81\n", args[0])
+			log.Fatalf("invalid ruleset argument: %s. Example: \\\\Rector\\\\Set\\\\ValueObject\\\\LevelSetList::UP_TO_PHP_81\n", args[0])
 		}
 
 		file, lines, err := loadRectorFile()
