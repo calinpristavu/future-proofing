@@ -14,7 +14,7 @@ var addRule = &cobra.Command{
 	Long:  `Edits the rector.php file to add a new rule`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if !isRuleArgumentValid(args) {
-			log.Fatalf("invalid ruleset argument: %s. Example: \\Rector\\Set\\ValueObject\\LevelSetList::UP_TO_PHP_81\n", args[0])
+			log.Fatalf("invalid ruleset argument: %s. Example: \\\\Rector\\\\Set\\\\ValueObject\\\\LevelSetList::UP_TO_PHP_81\n", args[0])
 		}
 
 		file, lines, err := loadRectorFile()
@@ -23,12 +23,12 @@ var addRule = &cobra.Command{
 		}
 		defer file.Close()
 
-		ruleInjectionPoint, err := findRuleLineIndex(lines)
+		ruleInjectionPoint, err := findLineIndexFor(lines, rulesMethod)
 		if err != nil {
 			// if we can't find a ->rules([...]) section, we'll try to find a ->rule(...) section and convert it to a ->rules section
 			lines = convertSingleRuleToMultipleRules(lines)
 
-			ruleInjectionPoint, err = findRuleLineIndex(lines)
+			ruleInjectionPoint, err = findLineIndexFor(lines, rulesMethod)
 			if err != nil {
 				log.Fatalf(err.Error())
 			}
@@ -43,15 +43,14 @@ var addRule = &cobra.Command{
 }
 
 func convertSingleRuleToMultipleRules(lines []string) []string {
-	const singleRuleString = "$rectorConfig->rule("
 	for index, line := range lines {
-		if !strings.Contains(line, "$rectorConfig->rule(") {
+		if !strings.Contains(line, ruleMethod) {
 			continue
 		}
 
-		indentation := line[:strings.Index(line, singleRuleString)]
+		indentation := line[:strings.Index(line, ruleMethod)]
 
-		lines[index] = fmt.Sprintf("%s$rectorConfig->rules([", indentation)
+		lines[index] = fmt.Sprintf("%s%s([", indentation, rulesMethod)
 		lines = append(
 			lines[:index+1],
 			append(
@@ -85,22 +84,4 @@ func isRuleArgumentValid(args []string) bool {
 	}
 
 	return true
-}
-
-func findRuleLineIndex(lines []string) (int, error) {
-	for index, line := range lines {
-		// are we on the line that represents a function call end?
-		if !closingFunctionCallRegex.MatchString(line) {
-			continue
-		}
-
-		// are we inside a ruleset function call, or another function call?
-		for i := index; i >= 0; i-- {
-			if strings.Contains(lines[i], "$rectorConfig->rules") {
-				return index, nil
-			}
-		}
-	}
-
-	return 0, fmt.Errorf("failed finding ruleset section in rector.php")
 }

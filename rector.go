@@ -16,6 +16,12 @@ var (
 	spaceIndentationRegex    *regexp.Regexp
 )
 
+const skipsMethod string = "$rectorConfig->skips"
+const ruleMethod string = "$rectorConfig->rule"
+const rulesMethod string = "$rectorConfig->rules"
+const setsMethod string = "$rectorConfig->sets"
+const rectorMethodDefinition = "return static function (RectorConfig $rectorConfig): void"
+
 func init() {
 	var err error
 	closingFunctionCallRegex, err = regexp.Compile(`]?\)?;`)
@@ -44,6 +50,62 @@ func injectLine(lines []string, index int, line string) []string {
 		lines[:index],
 		append(
 			[]string{fmt.Sprintf("%s%s,", indentation, line)},
+			lines[index:]...,
+		)...,
+	)
+
+	return lines
+}
+
+func findLineIndexFor(lines []string, needle string) (int, error) {
+	for index, line := range lines {
+		// are we on the line that represents a function call end?
+		if !closingFunctionCallRegex.MatchString(line) {
+			continue
+		}
+
+		// are we inside the skip function call, or another function call?
+		for i := index; i >= 0; i-- {
+			if strings.Contains(lines[i], needle) {
+				return index, nil
+			}
+		}
+	}
+
+	return 0, fmt.Errorf("failed finding %s in rector.php", needle)
+}
+
+func injectSkipMethod(lines []string, rule string) []string {
+	index, err := findLineIndexFor(lines, rectorMethodDefinition)
+	if err != nil {
+		log.Fatalf("could not find the definition of the main method in the rector.php file: %s", err)
+	}
+
+	index++
+
+	lines = append(
+		lines[:index],
+		append(
+			[]string{fmt.Sprintf("\t%s([\n\t\t%s\n\t]);", skipsMethod, rule)},
+			lines[index:]...,
+		)...,
+	)
+
+	return lines
+}
+
+func injectSetsMethod(lines []string, set string) []string {
+	index, err := findLineIndexFor(lines, rectorMethodDefinition)
+	if err != nil {
+		log.Fatalf("could not find the definition of the main method in the rector.php file: %s", err)
+	}
+
+	index++
+
+	lines = append(
+		lines[:index],
+		append(
+			[]string{fmt.Sprintf("\t%s([\n\t\t%s\n\t]);", setsMethod, set)},
 			lines[index:]...,
 		)...,
 	)
