@@ -14,7 +14,7 @@ var addRule = &cobra.Command{
 	Long:  `Edits the rector.php file to add a new rule`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if !isRuleArgumentValid(args) {
-			log.Fatalf("Invalid or missing argument! Example: \\\\Rector\\\\Set\\\\ValueObject\\\\LevelSetList::UP_TO_PHP_81\n")
+			log.Fatalf("Invalid or missing argument! Example: \\\\Rector\\\\Set\\\\ValueObject\\\\LevelSetList::UP_TO_PHP_81::class\n")
 		}
 
 		file, lines, err := loadRectorFile()
@@ -70,6 +70,10 @@ func convertSingleRuleToMultipleRules(lines []string) []string {
 func isRuleArgumentValid(args []string) bool {
 	// there should be an argument
 	if len(args) == 0 {
+		return false
+	}
+
+	if !strings.Contains(args[0], "::") {
 		return false
 	}
 
