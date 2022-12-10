@@ -54,7 +54,7 @@ func convertSingleRuleToMultipleRules(lines []string) []string {
 		lines = append(
 			lines[:index+1],
 			append(
-				[]string{fmt.Sprintf("%s)];", indentation)},
+				[]string{fmt.Sprintf("%s]);", indentation)},
 				lines[index+1:]...,
 			)...,
 		)
