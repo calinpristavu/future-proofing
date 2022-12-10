@@ -47,11 +47,6 @@ func isSkipArgumentValid(args []string) bool {
 		return false
 	}
 
-	// argument must be a call to a constant
-	if !strings.Contains(args[0], "::") {
-		return false
-	}
-
 	// argument must have a namespace
 	if !strings.Contains(args[0], "\\") {
 		return false
