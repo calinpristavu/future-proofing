@@ -1,73 +1,76 @@
 future-setup:
-    # This is just an example.
-    # If your project has a Dockerfile. Use that one and change the "FROM " section to a latest PHP base image.
-    image: php:latest-fpm-alpine
+    # This is just an example
+    # If your project has a Dockerfile. Use that one and change the "FROM " section to the latest PHP base image
+    image: php:fpm-alpine
     stage: future
+    #before_script: Set up your project's infrastructure
     script:
-        - apk add --no-cache curl openldap-dev
-        - docker-php-ext-install ldap pdo_mysql
         - curl --silent --show-error "https://getcomposer.org/installer" | php -- --install-dir=/usr/local/bin --filename=composer
-        - composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+        - composer install --no-interaction --no-scripts --prefer-dist
     artifacts:
         paths:
             - vendor/
 
 future-proofing:
+    image: php:fpm-alpine
     stage: future
+    needs: []
+    dependencies:
+        - future-setup
+    #services: Define the services required to run your test suite
+    #variables: Define the variables required to run your test suite
+    #before_script: Run all the necessary steps in order to set up the infrastructure required to run your test suite
     script:
-        - echo fetch_future_binary_into_bin_dir # @see https://cobra.dev/
-        - bin/future bump-php latest
-        - bin/future bump-deps
-        - composer update -W
-
-        - composer require rector/rector --dev
+        - vendor/bin/future bump-php latest
+        - vendor/bin/future bump-deps
+        - composer update -W --no-interaction --no-scripts
         - vendor/bin/rector init
 
         # section that registers rector sets
-        - bin/future add-set \Rector\Set\ValueObject\SetList::CODE_QUALITY
-        - bin/future add-set \Rector\Set\ValueObject\SetList::CODING_STYLE
-        - bin/future add-set \Rector\Set\ValueObject\SetList::DEAD_CODE
-        - bin/future add-set \Rector\Set\ValueObject\SetList::EARLY_RETURN
-        - bin/future add-set \Rector\Set\ValueObject\SetList::PSR_4
-        - bin/future add-set \Rector\Set\ValueObject\SetList::PRIVATIZATION
-        - bin/future add-set \Rector\Set\ValueObject\SetList::TYPE_DECLARATION
-        - bin/future add-set \Rector\Set\ValueObject\SetList::TYPE_DECLARATION_STRICT
-        - bin/future add-set \Rector\Set\ValueObject\LevelSetList::UP_TO_PHP_82
+        - vendor/bin/future add-set \Rector\Set\ValueObject\SetList::CODE_QUALITY
+        - vendor/bin/future add-set \Rector\Set\ValueObject\SetList::CODING_STYLE
+        - vendor/bin/future add-set \Rector\Set\ValueObject\SetList::DEAD_CODE
+        - vendor/bin/future add-set \Rector\Set\ValueObject\SetList::EARLY_RETURN
+        - vendor/bin/future add-set \Rector\Set\ValueObject\SetList::PSR_4
+        - vendor/bin/future add-set \Rector\Set\ValueObject\SetList::PRIVATIZATION
+        - vendor/bin/future add-set \Rector\Set\ValueObject\SetList::TYPE_DECLARATION
+        - vendor/bin/future add-set \Rector\Set\ValueObject\SetList::TYPE_DECLARATION_STRICT
+        - vendor/bin/future add-set \Rector\Set\ValueObject\LevelSetList::UP_TO_PHP_82
 
         # section that registers rector rules
-        - bin/future add-ruleset \Rector\DependencyInjection\Rector\Class_\ActionInjectionToConstructorInjectionRector
-        - bin/future add-ruleset \Rector\RemovingStatic\Rector\ClassMethod\LocallyCalledStaticMethodToNonStaticRector
-        - bin/future add-ruleset \Rector\Restoration\Rector\Property\MakeTypedPropertyNullableIfCheckedRector
-        - bin/future add-ruleset \Rector\Restoration\Rector\Class_\RemoveFinalFromEntityRector
-        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\ArrowFunction\AddArrowFunctionReturnTypeRector
-        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\Closure\AddClosureReturnTypeRector
-        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\AddMethodCallBasedStrictParamTypeRector
-        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\AddReturnTypeDeclarationBasedOnParentClassMethodRector
-        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\AddVoidReturnTypeWhereNoReturnRector
-        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\ParamTypeByMethodCallTypeRector
-        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\ParamTypeByParentCallTypeRector
-        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\Param\ParamTypeFromStrictTypedPropertyRector
-        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromReturnNewRector
-        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictBoolReturnExprRector
-        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictNativeCallRector
-        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictNewArrayRector
-        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictTypedPropertyRector
-        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\Property\TypedPropertyFromAssignsRector
-        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\Property\TypedPropertyFromStrictConstructorRector
-        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\Property\TypedPropertyFromStrictGetterMethodReturnTypeRector
-        - bin/future add-ruleset \Rector\TypeDeclaration\Rector\Property\TypedPropertyFromStrictSetUpRector
-        - bin/future add-ruleset \Rector\Visibility\Rector\ClassMethod\ExplicitPublicClassMethodRector
+        - vendor/bin/future add-ruleset \Rector\DependencyInjection\Rector\Class_\ActionInjectionToConstructorInjectionRector
+        - vendor/bin/future add-ruleset \Rector\RemovingStatic\Rector\ClassMethod\LocallyCalledStaticMethodToNonStaticRector
+        - vendor/bin/future add-ruleset \Rector\Restoration\Rector\Property\MakeTypedPropertyNullableIfCheckedRector
+        - vendor/bin/future add-ruleset \Rector\Restoration\Rector\Class_\RemoveFinalFromEntityRector
+        - vendor/bin/future add-ruleset \Rector\TypeDeclaration\Rector\ArrowFunction\AddArrowFunctionReturnTypeRector
+        - vendor/bin/future add-ruleset \Rector\TypeDeclaration\Rector\Closure\AddClosureReturnTypeRector
+        - vendor/bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\AddMethodCallBasedStrictParamTypeRector
+        - vendor/bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\AddReturnTypeDeclarationBasedOnParentClassMethodRector
+        - vendor/bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\AddVoidReturnTypeWhereNoReturnRector
+        - vendor/bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\ParamTypeByMethodCallTypeRector
+        - vendor/bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\ParamTypeByParentCallTypeRector
+        - vendor/bin/future add-ruleset \Rector\TypeDeclaration\Rector\Param\ParamTypeFromStrictTypedPropertyRector
+        - vendor/bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromReturnNewRector
+        - vendor/bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictBoolReturnExprRector
+        - vendor/bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictNativeCallRector
+        - vendor/bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictNewArrayRector
+        - vendor/bin/future add-ruleset \Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictTypedPropertyRector
+        - vendor/bin/future add-ruleset \Rector\TypeDeclaration\Rector\Property\TypedPropertyFromAssignsRector
+        - vendor/bin/future add-ruleset \Rector\TypeDeclaration\Rector\Property\TypedPropertyFromStrictConstructorRector
+        - vendor/bin/future add-ruleset \Rector\TypeDeclaration\Rector\Property\TypedPropertyFromStrictGetterMethodReturnTypeRector
+        - vendor/bin/future add-ruleset \Rector\TypeDeclaration\Rector\Property\TypedPropertyFromStrictSetUpRector
+        - vendor/bin/future add-ruleset \Rector\Visibility\Rector\ClassMethod\ExplicitPublicClassMethodRector
 
         #section that excludes rector rules
-        - bin/future skip \Rector\Php80\Rector\Class_\ClassPropertyAssignToConstructorPromotionRector
-        - bin/future skip \Rector\Privatization\Rector\Class_\FinalizeClassesWithoutChildrenRector
-        - bin/future skip \Rector\CodingStyle\Rector\ClassConst\VarConstantCommentRector
-        - bin/future skip \Rector\DeadCode\Rector\ClassMethod\RemoveUnusedPrivateMethodRector
-        - bin/future skip \Rector\TypeDeclaration\Rector\ClassMethod\AddArrayParamDocTypeRector
-        - bin/future skip \Rector\TypeDeclaration\Rector\ClassMethod\AddArrayReturnDocTypeRector
-        - bin/future skip \Rector\DeadCode\Rector\MethodCall\RemoveEmptyMethodCallRector
-        - bin/future skip \Rector\CodingStyle\Rector\String_\SymplifyQuoteEscapeRector
-        - bin/future skip \Rector\CodingStyle\Rector\Catch_\CatchExceptionNameMatchingTypeRector
+        - vendor/bin/future skip \Rector\Php80\Rector\Class_\ClassPropertyAssignToConstructorPromotionRector
+        - vendor/bin/future skip \Rector\Privatization\Rector\Class_\FinalizeClassesWithoutChildrenRector
+        - vendor/bin/future skip \Rector\CodingStyle\Rector\ClassConst\VarConstantCommentRector
+        - vendor/bin/future skip \Rector\DeadCode\Rector\ClassMethod\RemoveUnusedPrivateMethodRector
+        - vendor/bin/future skip \Rector\TypeDeclaration\Rector\ClassMethod\AddArrayParamDocTypeRector
+        - vendor/bin/future skip \Rector\TypeDeclaration\Rector\ClassMethod\AddArrayReturnDocTypeRector
+        - vendor/bin/future skip \Rector\DeadCode\Rector\MethodCall\RemoveEmptyMethodCallRector
+        - vendor/bin/future skip \Rector\CodingStyle\Rector\String_\SymplifyQuoteEscapeRector
+        - vendor/bin/future skip \Rector\CodingStyle\Rector\Catch_\CatchExceptionNameMatchingTypeRector
 
         - vendor/bin/rector process src
 
@@ -75,6 +78,3 @@ future-proofing:
         - vendor/bin/phpunit
 #        - vendor/bin/codeception
 #        - vendor/bin/behat
-        # /test running section
-    dependencies:
-        - future-composer
