@@ -16,7 +16,7 @@ var (
 	spaceIndentationRegex    *regexp.Regexp
 )
 
-const skipsMethod string = "$rectorConfig->skips"
+const skipsMethod string = "$rectorConfig->skip"
 const ruleMethod string = "$rectorConfig->rule"
 const rulesMethod string = "$rectorConfig->rules"
 const setsMethod string = "$rectorConfig->sets"
