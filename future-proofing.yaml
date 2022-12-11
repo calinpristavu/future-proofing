@@ -1,32 +1,26 @@
-future-setup:
-    # This is just an example
-    # If your project has a Dockerfile. Use that one and change the "FROM " section to the latest PHP base image
+.future-config:
+    #replace this with the base setup of your project
+    #if your project has a Dockerfile, use it and change the "FROM" section to php:fpm-alpine
     image: php:fpm-alpine
-    stage: future
-    #before_script: Set up your project's infrastructure
-    script:
-        - curl --silent --show-error "https://getcomposer.org/installer" | php -- --install-dir=/usr/local/bin --filename=composer
-        - composer install --no-interaction --no-scripts --prefer-dist
-    artifacts:
-        paths:
-            - vendor/
 
 future-proofing:
-    image: php:fpm-alpine
+    extends: .future-config
     stage: future
+    allow_failure: true
     needs: []
-    dependencies:
-        - future-setup
-    #services: Define the services required to run your test suite
-    #variables: Define the variables required to run your test suite
-    #before_script: Run all the necessary steps in order to set up the infrastructure required to run your test suite
+    #services: define the services required to run your test suite
+    #variables: define the variables required to run your test suite
+    before_script:
+        #perform all the necessary steps required to run your project's test suite
+        - curl --silent --show-error "https://getcomposer.org/installer" | php -- --install-dir=/usr/local/bin --filename=composer
+        - composer install --no-interaction --no-scripts --prefer-dist
     script:
         - vendor/bin/future bump-php latest
         - vendor/bin/future bump-deps
         - composer update -W --no-interaction --no-scripts
         - vendor/bin/rector init
 
-        # section that registers rector sets
+        #register rector rule sets
         - vendor/bin/future add-ruleset \\Rector\\Set\\ValueObject\\SetList::CODE_QUALITY
         - vendor/bin/future add-ruleset \\Rector\\Set\\ValueObject\\SetList::CODING_STYLE
         - vendor/bin/future add-ruleset \\Rector\\Set\\ValueObject\\SetList::DEAD_CODE
@@ -34,10 +28,9 @@ future-proofing:
         - vendor/bin/future add-ruleset \\Rector\\Set\\ValueObject\\SetList::PSR_4
         - vendor/bin/future add-ruleset \\Rector\\Set\\ValueObject\\SetList::PRIVATIZATION
         - vendor/bin/future add-ruleset \\Rector\\Set\\ValueObject\\SetList::TYPE_DECLARATION
-        - vendor/bin/future add-ruleset \\Rector\\Set\\ValueObject\\SetList::TYPE_DECLARATION_STRICT
         - vendor/bin/future add-ruleset \\Rector\\Set\\ValueObject\\LevelSetList::UP_TO_PHP_82
 
-        # section that registers rector rules
+        #register rector rules
         - vendor/bin/future add-rule \\Rector\\DependencyInjection\\Rector\\Class_\\ActionInjectionToConstructorInjectionRector::class
         - vendor/bin/future add-rule \\Rector\\RemovingStatic\\Rector\\ClassMethod\\LocallyCalledStaticMethodToNonStaticRector::class
         - vendor/bin/future add-rule \\Rector\\Restoration\\Rector\\Property\\MakeTypedPropertyNullableIfCheckedRector::class
@@ -61,7 +54,7 @@ future-proofing:
         - vendor/bin/future add-rule \\Rector\\TypeDeclaration\\Rector\\Property\\TypedPropertyFromStrictSetUpRector::class
         - vendor/bin/future add-rule \\Rector\\Visibility\\Rector\\ClassMethod\\ExplicitPublicClassMethodRector::class
 
-        #section that excludes rector rules
+        #exclude rector rules
         - vendor/bin/future skip \\Rector\\Php80\\Rector\\Class_\\ClassPropertyAssignToConstructorPromotionRector::class
         - vendor/bin/future skip \\Rector\\Privatization\\Rector\\Class_\\FinalizeClassesWithoutChildrenRector::class
         - vendor/bin/future skip \\Rector\\CodingStyle\\Rector\\ClassConst\\VarConstantCommentRector::class
@@ -72,9 +65,10 @@ future-proofing:
         - vendor/bin/future skip \\Rector\\CodingStyle\\Rector\\String_\\SymplifyQuoteEscapeRector::class
         - vendor/bin/future skip \\Rector\\CodingStyle\\Rector\\Catch_\\CatchExceptionNameMatchingTypeRector::class
 
-        - vendor/bin/rector process src
+        - vendor/bin/rector process src --no-progress-bar --no-diffs
 
-        # test running section
-        - vendor/bin/phpunit
-#        - vendor/bin/codeception
-#        - vendor/bin/behat
+        #run your project's test suite
+        - SYMFONY_DEPRECATIONS_HELPER=disabled vendor/bin/phpunit --no-interaction --colors=never
+
+        #- vendor/bin/codeception
+        #- vendor/bin/behat
