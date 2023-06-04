@@ -1,3 +1,5 @@
+!!!THIS REPO WAS MOVED TO github.com/evozon/future
+
 Future is a library that facilitates the upgrade process of PHP projects.
 
 LOGO HERE
